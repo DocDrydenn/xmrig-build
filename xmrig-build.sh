@@ -32,20 +32,6 @@ fi
 echo " by DocDrydenn @ getpimp.org"
 echo -e "\e[32m========================================"
 echo -e "========================================\e[39m"
-
-# Validate that a proper argument was passed from the commandline
-#if [[ "$1" != "7" && "$1" != "8" ]]
-# then
-#  echo -e "\e[31m==============================================\e[39m"
-#  echo -e "Required Command Argument \e[31mInvalid\e[39m or \e[31mMissing\e[39m."
-#  echo " "
-#  echo -e "Argument must be \e[34m7\e[39m for ARMv7 or \e[34m8\e[39m for ARMv8"
-#  echo " "
-#  echo -e "\e[31mOperation Aborted.\e[39m"
-#  echo -e "\e[31m==============================================\e[39m"
-#  exit -1
-#fi
-
 echo " "
 echo -e "\e[32m==================================\e[39m"
 echo -e "\e[35m6. Backup of Current..."
