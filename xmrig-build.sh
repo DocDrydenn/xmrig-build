@@ -5,7 +5,7 @@ clear
 
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 build=0
-VERS="1.2"
+VERS="1.3"
 
 if [[ "$1" = "7" ]]
  then
