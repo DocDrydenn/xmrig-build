@@ -5,7 +5,7 @@ clear
 
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 build=0
-VERS="1.3"
+VERS="1.4"
 
 if [[ "$1" = "7" ]]
  then
@@ -134,19 +134,19 @@ echo -e "\e[32m==================================\e[39m"
 # Setup build enviroment
 if [[ "$build" = "7" ]]
  then
-  cmake -DARM_TARGET=7 ..
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+  make -j 4 --environment-overrides --keep-going
 fi
 if [[ "$build" = "8" ]]
  then
-  cmake -DARM_TARGET=8 ..
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+  make -j 4 --environment-overrides --keep-going
 fi
 if [[ "$build" = "0" ]]
  then
-  cmake ..
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  make
 fi
-
-# Build
- make
 
 # Debug - Skip Build
 # touch xmrig
