@@ -192,7 +192,7 @@ cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF
 #! /bin/bash
 
 screen -wipe
-screen -dm /root/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cpu.log --donate-level 1 --rig-id <rig_name>
+screen -dm $SCRIPTPATH/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cpu.log --donate-level 1 --rig-id <rig_name>
 screen -r
 EOF
 
