@@ -146,10 +146,10 @@ if [[ "$build" = "0" ]]
 fi
 
 # Build
-# make
+ make
 
 # Debug - Skip Build
- touch xmrig
+# touch xmrig
 
 echo -e "\e[32m==================================\e[39m"
 echo -e "\e[35m Completed"
