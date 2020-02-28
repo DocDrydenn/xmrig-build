@@ -15,6 +15,6 @@ Usage: `./xmrig-build.sh #`
 ## What Does This Script Do?
 
 First, it looks for a command line argument of `7` or `8` to indicate ARMv7 or ARMv8. If nothing (or anything other than `7` and `8`) is found, the script defaults to x86-64. Next, it runs through the following 6 stages using the current directory:
-1. Dependancy Check - 
+1. Dependancy Check - Install/Update: `git`, `build-essential`, `cmake`, `libuv1-dev`, `libssl-dev`, `libhwloc-dev`, `screen`, `p7zip-full`
 2. Backup - Check if the `xmrig` directory exists (and creates it if it doesn't). Delete any old backup files (`~/xmrig/xmrig.bak` and `~/xmrig/xmrig-build.7z.bak`) then renames the current files (`xmrig` binary and `xmrig-build.7z` archive) with a `.bak` extension making them the new backup files. 
 3. 
