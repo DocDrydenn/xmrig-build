@@ -5,7 +5,14 @@ VERS="1.5"
  clear
 
 errexit() {
+  for i in {1..5}; do echo "+"; done
   echo 'Error raised. Cleanup and Exiting!'
+  if [ -d "$SCRIPTPATH/_source" ]
+   then
+    # Remove source folder if found.
+    rm -r $SCRIPTPATH/_source
+  fi
+  exit 1
 }
 
 trap 'errexit' ERR
