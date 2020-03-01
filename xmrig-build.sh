@@ -1,21 +1,42 @@
 #!/bin/bash
-VERS="1.5"
+VERS="1.6"
 
 # Clear screen
  clear
 
+# Error Trapping with Cleanup
 errexit() {
-  for i in {1..5}; do echo "+"; done
-  echo 'Error raised. Cleanup and Exiting!'
-  if [ -d "$SCRIPTPATH/_source" ]
-   then
-    # Remove source folder if found.
-    rm -r $SCRIPTPATH/_source
-  fi
+  # Draw 5 lines of + and message
+   for i in {1..5}; do echo "+"; done
+   echo 'Error raised. Cleanup and Exiting!'
+  
+  # Remove _source directory if found.
+   if [ -d "$SCRIPTPATH/_source" ]; then rm -r $SCRIPTPATH/_source; fi
+  
+  # Remove xmrig directory if found.
+   if [ -d "$SCRIPTPATH/xmrig" ]; then rm -r $SCRIPTPATH/xmrig; fi
+  
+  # Dirty Exit
   exit 1
 }
 
-trap 'errexit' ERR
+# Phase Header
+phaseheader() {
+ echo -e "\e[32m==================================\e[39m"
+ echo -e "\e[35m6. $1..."
+ echo -e "\e[32m==================================\e[39m"
+}
+
+# Phase Footer
+phasefooter() {
+ echo -e "\e[32m==================================\e[39m"
+ echo -e "\e[35m Completed"
+ echo -e "\e[32m==================================\e[39m"
+ echo
+}
+
+# Error Trap
+ trap 'errexit' ERR
 
 # Setup Variables
  SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
@@ -29,24 +50,30 @@ trap 'errexit' ERR
  if [[ "$2" = "d" ]]; then DEBUG=1; fi
 
 # Opening Intro
- echo -e "\e[32m========================================"; echo -e "========================================\e[39m"
+ echo -e "\e[32m========================================"
+ echo -e "========================================\e[39m"
  echo " XMRig Build Script v$VERS"
 
- if [[ "$DEBUG" = "1" ]]; then echo " "; echo -e "\e[5m\e[96mDEBUG ENABLED - SKIPPING BUILD PROCESS\e[39m\e[0m"; echo " "; fi
  if [[ "$BUILD" = "7" ]]; then echo " for ARMv7"; fi
  if [[ "$BUILD" = "8" ]]; then echo " for ARMv8"; fi
  if [[ "$BUILD" = "0" ]]; then echo " for x86-64"; fi
 
  echo " by DocDrydenn @ getpimp.org"
- echo -e "\e[32m========================================"; echo -e "========================================\e[39m"; echo " "
+ 
+ if [[ "$DEBUG" = "1" ]]; then echo; echo -e "\e[5m\e[96mDEBUG ENABLED - SKIPPING BUILD PROCESS\e[39m\e[0m"; echo; fi
 
-# Pause for Extra Effect LOL
+ echo -e "\e[32m========================================"
+ echo -e "========================================\e[39m"
+ echo
+
+# Pause for Effect LOL
  sleep 5
 
 # Start Phase 6
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m6. Verifiing/Installing Tools..."
- echo -e "\e[32m==================================\e[39m"
+ phaseheader "Verifing/Installing Dependancies" 
+# echo -e "\e[32m==================================\e[39m"
+# echo -e "\e[35m6. Verifiing/Installing Tools..."
+# echo -e "\e[32m==================================\e[39m"
 
 # Install required tools for building from source
  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mRunning the apt stuff\e[39m"; fi
@@ -58,10 +85,11 @@ trap 'errexit' ERR
 # apt install htop nano -y
 
 # End Phase 6
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m Completed"
- echo -e "\e[32m==================================\e[39m"
- echo " "
+ phasefooter
+# echo -e "\e[32m==================================\e[39m"
+# echo -e "\e[35m Completed"
+# echo -e "\e[32m==================================\e[39m"
+# echo
 
 # Start Phase 5
  echo -e "\e[32m==================================\e[39m"
@@ -112,55 +140,52 @@ trap 'errexit' ERR
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m Completed"
  echo -e "\e[32m==================================\e[39m"
- echo " "
+ echo
 
 # Start Phase 4
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m4. Setting Up Source..."
  echo -e "\e[32m==================================\e[39m"
 
- # Enable Error exiting of this script from this point on
- # set -e
-
+# If a _source directory is found, remove it.
  if [ -d "$SCRIPTPATH/_source" ]
   then
-   # Old source folder found. Remove it.
-   echo "_source directory found... weird. Let's get rid of that."
    rm -r $SCRIPTPATH/_source
  fi
 
- # Make new source folder
-  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mCreating _source directory\e[39m"; fi
-  mkdir $SCRIPTPATH/_source
+# Make new source folder
+ if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mCreating _source directory\e[39m"; fi
+ mkdir $SCRIPTPATH/_source
 
- # Change working dir to source folder
-  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mEnter _source directory\e[39m"; fi
-  cd $SCRIPTPATH/_source
+# Change working dir to source folder
+ if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mEnter _source directory\e[39m"; fi
+ cd $SCRIPTPATH/_source
 
- # Clone XMRig from github into source folder
-  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mCloning xmrig git\e[39m"; fi
-  git clone https://github.com/xmrig/xmrig.git
+# Clone XMRig from github into source folder
+ if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mCloning xmrig git\e[39m"; fi
+ git clone https://github.com/xmrig/xmrig.git
 
- # Change working dir to clone - Create build folder - Change working dir to build folder
-  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mEnter xmrig, make build, and enter build directories\e[39m"; fi
-  cd xmrig && mkdir build && cd build
+# Change working dir to clone - Create build folder - Change working dir to build folder
+ if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mEnter xmrig, make build, and enter build directories\e[39m"; fi
+ cd xmrig && mkdir build && cd build
 
 # End Phase 4
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m Completed"
  echo -e "\e[32m==================================\e[39m"
- echo " "
+ echo
 
 # Start Phase 3
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m3. Building..."
  echo -e "\e[32m==================================\e[39m"
 
- # Setup build enviroment
-  if [[ "$BUILD" = "7" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF; fi
-  if [[ "$BUILD" = "8" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF; fi
-  if [[ "$BUILD" = "0" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release; fi
+# Setup build enviroment
+ if [[ "$BUILD" = "7" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF; fi
+ if [[ "$BUILD" = "8" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF; fi
+ if [[ "$BUILD" = "0" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release; fi
 
+# Bypass make process if debug is enabled.
  if [[ "$DEBUG" = "1" ]]
   then
    echo -e "\e[96mSkipping Build and touching xmrig\e[39m"
@@ -173,44 +198,44 @@ trap 'errexit' ERR
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m Completed"
  echo -e "\e[32m==================================\e[39m"
- echo " "
+ echo
 
 # Start Phase 2
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m2. Compressing and Moving..."
  echo -e "\e[32m==================================\e[39m"
 
- # Compress built xmrig into archive
-  7z a xmrig-build.7z $SCRIPTPATH/xmrig
+# Compress built xmrig into archive
+ 7z a xmrig-build.7z $SCRIPTPATH/xmrig
 
- # Copy archive to xmrig folder
-  cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z
+# Copy archive to xmrig folder
+ cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z
 
- # Copy built xmrig to xmrig folder
-  cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
+# Copy built xmrig to xmrig folder
+ cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
 
 # End Phase 2
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m Completed."
  echo -e "\e[32m==================================\e[39m"
- echo " "
+ echo
 
 # Start Phase 1
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m1. Cleaning Up..."
  echo -e "\e[32m==================================\e[39m"
 
- # Change working dir back to root
-  cd $SCRIPTPATH
+# Change working dir back to root
+ cd $SCRIPTPATH
 
- # Remove source folder
-  echo "Source directory removed."
-  rm -r _source
+# Remove source folder
+ echo "Source directory removed."
+ rm -r _source
 
- # Create start-example.sh
-  if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]
-   then
-    echo "start-example.sh created."
+# Create start-example.sh
+ if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]
+  then
+   echo "start-example.sh created."
 
 cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF
 #! /bin/bash
@@ -220,19 +245,20 @@ screen -dm $SCRIPTPATH/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cp
 screen -r
 EOF
 
-    # Make start-example.sh executable
-     echo "start-example.sh made executable."
-     chmod +x $SCRIPTPATH/xmrig/start-example.sh
-   fi
+   # Make start-example.sh executable
+    echo "start-example.sh made executable."
+    chmod +x $SCRIPTPATH/xmrig/start-example.sh
+  fi
 
 # End Phase 1
  echo -e "\e[32m==================================\e[39m"
  echo -e "\e[35m Completed\e[39m"
  echo -e "\e[32m==================================\e[39m"
- echo " "
+ echo
 
 # Close Out
- echo -e "\e[32m========================================"; echo -e "========================================\e[39m"
+ echo -e "\e[32m========================================"
+ echo -e "========================================\e[39m"
  echo " XMRig Build Script v$VERS"
 
  if [[ "$build" = "7" ]]; then echo " for ARMv7"; fi
@@ -240,13 +266,16 @@ EOF
  if [[ "$build" = "0" ]]; then echo " for x86-64"; fi
 
  echo " by DocDrydenn @ getpimp.org"
- echo " "
+ echo
  echo " Folder Location: $SCRIPTPATH/xmrig/"
  echo " Bin: $SCRIPTPATH/xmrig/xmrig"
  echo " Example Start Script: $SCRIPTPATH/xmrig/start-example.sh"
- echo " "
- if [[ "$DEBUG" = "1" ]]; then echo " "; echo -e "\e[5m\e[96mDEBUG ENABLED - BUILD PROCESS WAS SKIPPED\e[39m\e[0m"; echo " "; fi 
-echo -e "\e[32m========================================"; echo -e "========================================\e[39m"
+ echo
+ 
+ if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96mDEBUG ENABLED - BUILD PROCESS WAS SKIPPED\e[39m\e[0m"; echo; fi 
+ 
+ echo -e "\e[32m========================================"
+ echo -e "========================================\e[39m"
 
 # Clean exit of script
  exit 0
