@@ -1,5 +1,5 @@
 #!/bin/bash
-VERS="1.6"
+VERS="1.6aa"
 
 # Clear screen
  clear
@@ -8,7 +8,7 @@ VERS="1.6"
 errexit() {
   # Draw 5 lines of + and message
    for i in {1..5}; do echo "+"; done
-   echo 'Error raised. Cleanup and Exiting!'
+   echo -e "\e[91mError raised! Cleaning Up and Exiting.\e[39m"
   
   # Remove _source directory if found.
    if [ -d "$SCRIPTPATH/_source" ]; then rm -r $SCRIPTPATH/_source; fi
@@ -22,17 +22,41 @@ errexit() {
 
 # Phase Header
 phaseheader() {
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m6. $1..."
- echo -e "\e[32m==================================\e[39m"
+  echo
+  echo -e "\e[32m=======================================\e[39m"
+  echo -e "\e[35m- $1..."
+  echo -e "\e[32m=======================================\e[39m"
 }
 
 # Phase Footer
 phasefooter() {
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m Completed"
- echo -e "\e[32m==================================\e[39m"
- echo
+  echo -e "\e[32m=======================================\e[39m"
+  echo -e "\e[35m $1 Completed"
+  echo -e "\e[32m=======================================\e[39m"
+  echo
+}
+
+# Intro/Outro Header
+inoutheader() {
+  echo -e "\e[32m=================================================="
+  echo -e "==================================================\e[39m"
+  echo " XMRig Build Script v$VERS"
+
+  if [[ "$BUILD" = "7" ]]; then echo " for ARMv7"; fi
+  if [[ "$BUILD" = "8" ]]; then echo " for ARMv8"; fi
+  if [[ "$BUILD" = "0" ]]; then echo " for x86-64"; fi
+
+  echo " by DocDrydenn @ getpimp.org"
+  echo
+
+  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96mDEBUG ENABLED - SKIPPING BUILD PROCESS\e[39m\e[0m"; echo; fi
+}
+
+# Intro/Outro Footer
+inoutfooter() {
+  echo -e "\e[32m=================================================="
+  echo -e "==================================================\e[39m"
+  echo
 }
 
 # Error Trap
@@ -50,30 +74,15 @@ phasefooter() {
  if [[ "$2" = "d" ]]; then DEBUG=1; fi
 
 # Opening Intro
- echo -e "\e[32m========================================"
- echo -e "========================================\e[39m"
- echo " XMRig Build Script v$VERS"
-
- if [[ "$BUILD" = "7" ]]; then echo " for ARMv7"; fi
- if [[ "$BUILD" = "8" ]]; then echo " for ARMv8"; fi
- if [[ "$BUILD" = "0" ]]; then echo " for x86-64"; fi
-
- echo " by DocDrydenn @ getpimp.org"
- 
- if [[ "$DEBUG" = "1" ]]; then echo; echo -e "\e[5m\e[96mDEBUG ENABLED - SKIPPING BUILD PROCESS\e[39m\e[0m"; echo; fi
-
- echo -e "\e[32m========================================"
- echo -e "========================================\e[39m"
- echo
+ inoutheader
+ inoutfooter
 
 # Pause for Effect LOL
  sleep 5
 
-# Start Phase 6
- phaseheader "Verifing/Installing Dependancies" 
-# echo -e "\e[32m==================================\e[39m"
-# echo -e "\e[35m6. Verifiing/Installing Tools..."
-# echo -e "\e[32m==================================\e[39m"
+### Start Phase 6
+ PHASE="Verifying/Installing Dependancies"
+ phaseheader $PHASE 
 
 # Install required tools for building from source
  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mRunning the apt stuff\e[39m"; fi
@@ -84,17 +93,12 @@ phasefooter() {
 # if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mRunning the extra apt stuff\e[39m"; fi
 # apt install htop nano -y
 
-# End Phase 6
- phasefooter
-# echo -e "\e[32m==================================\e[39m"
-# echo -e "\e[35m Completed"
-# echo -e "\e[32m==================================\e[39m"
-# echo
+### End Phase 6
+ phasefooter $PHASE
 
-# Start Phase 5
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m5. Backup..."
- echo -e "\e[32m==================================\e[39m"
+### Start Phase 5
+ PHASE="Backup"
+ phaseheader $PHASE
 
  if [ -d "$SCRIPTPATH/xmrig" ]
   then
@@ -136,16 +140,12 @@ phasefooter() {
    mkdir -p $SCRIPTPATH/xmrig
  fi
 
-# End Phase 5
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m Completed"
- echo -e "\e[32m==================================\e[39m"
- echo
+### End Phase 5
+ phasefooter $PHASE
 
-# Start Phase 4
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m4. Setting Up Source..."
- echo -e "\e[32m==================================\e[39m"
+### Start Phase 4
+ PHASE="Setting Up Source"
+ phaseheader $PHASE
 
 # If a _source directory is found, remove it.
  if [ -d "$SCRIPTPATH/_source" ]
@@ -169,16 +169,12 @@ phasefooter() {
  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mEnter xmrig, make build, and enter build directories\e[39m"; fi
  cd xmrig && mkdir build && cd build
 
-# End Phase 4
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m Completed"
- echo -e "\e[32m==================================\e[39m"
- echo
+### End Phase 4
+ phasefooter $PHASE
 
-# Start Phase 3
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m3. Building..."
- echo -e "\e[32m==================================\e[39m"
+### Start Phase 3
+ PHASE="Building"
+ phaseheader $PHASE
 
 # Setup build enviroment
  if [[ "$BUILD" = "7" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF; fi
@@ -195,15 +191,11 @@ phasefooter() {
  fi
 
 # End Phase 3
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m Completed"
- echo -e "\e[32m==================================\e[39m"
- echo
+ phasefooter $PHASE
 
-# Start Phase 2
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m2. Compressing and Moving..."
- echo -e "\e[32m==================================\e[39m"
+### Start Phase 2
+ PHASE="Compressing and Moving"
+ phaseheader $PHASE
 
 # Compress built xmrig into archive
  7z a xmrig-build.7z $SCRIPTPATH/xmrig
@@ -215,15 +207,11 @@ phasefooter() {
  cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
 
 # End Phase 2
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m Completed."
- echo -e "\e[32m==================================\e[39m"
- echo
+ phasefooter $PHASE
 
 # Start Phase 1
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m1. Cleaning Up..."
- echo -e "\e[32m==================================\e[39m"
+ PHASE="Cleaning Up"
+ phaseheader $PHASE
 
 # Change working dir back to root
  cd $SCRIPTPATH
@@ -251,31 +239,15 @@ EOF
   fi
 
 # End Phase 1
- echo -e "\e[32m==================================\e[39m"
- echo -e "\e[35m Completed\e[39m"
- echo -e "\e[32m==================================\e[39m"
- echo
+ phasefooter $PHASE
 
 # Close Out
- echo -e "\e[32m========================================"
- echo -e "========================================\e[39m"
- echo " XMRig Build Script v$VERS"
-
- if [[ "$build" = "7" ]]; then echo " for ARMv7"; fi
- if [[ "$build" = "8" ]]; then echo " for ARMv8"; fi
- if [[ "$build" = "0" ]]; then echo " for x86-64"; fi
-
- echo " by DocDrydenn @ getpimp.org"
- echo
+ inoutheader
  echo " Folder Location: $SCRIPTPATH/xmrig/"
  echo " Bin: $SCRIPTPATH/xmrig/xmrig"
  echo " Example Start Script: $SCRIPTPATH/xmrig/start-example.sh"
  echo
- 
- if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96mDEBUG ENABLED - BUILD PROCESS WAS SKIPPED\e[39m\e[0m"; echo; fi 
- 
- echo -e "\e[32m========================================"
- echo -e "========================================\e[39m"
+ inoutfooter
 
 # Clean exit of script
  exit 0
