@@ -14,7 +14,40 @@ Usage: `./xmrig-build.sh #`
 
 ## What Does This Script Do?
 
-First, it looks for a command line argument of `7` or `8` to indicate ARMv7 or ARMv8. If nothing (or anything other than `7` and `8`) is found, the script defaults to x86-64. Next, it runs through the following 6 stages using the current directory:
-1. Dependancy Check - Install/Update: `git`, `build-essential`, `cmake`, `libuv1-dev`, `libssl-dev`, `libhwloc-dev`, `screen`, `p7zip-full`
-2. Backup - Check if the `xmrig` directory exists (and creates it if it doesn't). Delete any old backup files (`~/xmrig/xmrig.bak` and `~/xmrig/xmrig-build.7z.bak`) then renames the current files (`xmrig` binary and `xmrig-build.7z` archive) with a `.bak` extension making them the new backup files. 
-3. 
+#### Dependancies...
+- apt update && apt upgrade -y
+- apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full -y
+
+#### Backup...
+- rm /root/xmrig/xmrig-build.7z.bak
+- rm /root/xmrig/xmrig.bak
+- mv /root/xmrig/xmrig-build.7z /root/xmrig/xmrig-build.7z.bak
+- mv /root/xmrig/xmrig /root/xmrig/xmrig.bak
+
+#### Setup...
+- mkdir /root/_source
+- cd /root/_source
+- git clone https://github.com/xmrig/xmrig.git
+- cd xmrig && mkdir build && cd build
+
+#### Compiling/Building...
+- For ARMv7 and ARMv8 - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+- For x86-64 - cmake .. -DCMAKE_BUILD_TYPE=Release
+- make
+
+#### Compressing/Moving...
+- 7z a xmrig-build.7z /root/xmrig
+- cp xmrig-build.7z /root/xmrig/xmrig-build.7z
+- cp /root/_source/xmrig/build/xmrig /root/xmrig/xmrig
+
+#### Cleanup...
+- cd /root
+- rm -r _source
+
+
+
+
+
+ Folder Location: /root/xmrig/
+ Bin: /root/xmrig/xmrig
+ Example Start Script: /root/xmrig/start-example.sh
