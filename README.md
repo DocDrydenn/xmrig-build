@@ -44,10 +44,11 @@ Usage: `./xmrig-build.sh #`
 - cd /root
 - rm -r _source
 
+Upon successful completion of this script, you should end up with an `xmrig` directory with the following contents:
+1. `xmrig` - XMRig binary
+2. `start-example.sh` - Example start script.
+3. `xmrig-build.7z` - 7zip archive of file #1 and file #2
+4. *`xmrig.bak` - Backup of last `xmrig` binary
+5. *`xmrig-build.7z.bak` - Backup of last `xmrig-build.7z` archive.
 
-
-
-
- Folder Location: /root/xmrig/
- Bin: /root/xmrig/xmrig
- Example Start Script: /root/xmrig/start-example.sh
+*Note: File #4 and file #5 will only exist after running this script at least twice.
