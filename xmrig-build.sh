@@ -1,11 +1,11 @@
 #!/bin/bash
-VERS="1.6aa"
+VERS="1.7"
 
 # Clear screen
  clear
 
 # Error Trapping with Cleanup
-errexit() {
+ errexit() {
   # Draw 5 lines of + and message
    for i in {1..5}; do echo "+"; done
    echo -e "\e[91mError raised! Cleaning Up and Exiting.\e[39m"
@@ -21,7 +21,7 @@ errexit() {
 }
 
 # Phase Header
-phaseheader() {
+ phaseheader() {
   echo
   echo -e "\e[32m=======================================\e[39m"
   echo -e "\e[35m- $1..."
@@ -29,7 +29,7 @@ phaseheader() {
 }
 
 # Phase Footer
-phasefooter() {
+ phasefooter() {
   echo -e "\e[32m=======================================\e[39m"
   echo -e "\e[35m $1 Completed"
   echo -e "\e[32m=======================================\e[39m"
@@ -37,23 +37,23 @@ phasefooter() {
 }
 
 # Intro/Outro Header
-inoutheader() {
+ inoutheader() {
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
   echo " XMRig Build Script v$VERS"
 
-  if [[ "$BUILD" = "7" ]]; then echo " for ARMv7"; fi
-  if [[ "$BUILD" = "8" ]]; then echo " for ARMv8"; fi
-  if [[ "$BUILD" = "0" ]]; then echo " for x86-64"; fi
+  [ $BUILD -eq 7 ] && echo " for ARMv7"
+  [ $BUILD -eq 8 ] && echo " for ARMv8"
+  [ $BUILD -eq 0 ] && echo " for x86-64"
 
   echo " by DocDrydenn @ getpimp.org"
   echo
 
-  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96mDEBUG ENABLED - SKIPPING BUILD PROCESS\e[39m\e[0m"; echo; fi
+  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SKIPPING BUILD PROCESS ++\e[39m\e[0m"; echo; fi
 }
 
 # Intro/Outro Footer
-inoutfooter() {
+ inoutfooter() {
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
   echo
@@ -68,10 +68,10 @@ inoutfooter() {
  DEBUG=0
 
 # Parse Commandline Arguments
- if [[ "$1" = "7" ]]; then BUILD=7; fi
- if [[ "$1" = "8" ]]; then BUILD=8; fi
- if [[ "$1" = "d" ]]; then DEBUG=1; fi
- if [[ "$2" = "d" ]]; then DEBUG=1; fi
+ [ "$1" = "7" ] && BUILD=7
+ [ "$1" = "8" ] && BUILD=8
+ [ "$1" = "d" ] && DEBUG=1
+ [ "$2" = "d" ] && DEBUG=1
 
 # Opening Intro
  inoutheader
@@ -81,16 +81,17 @@ inoutfooter() {
  sleep 5
 
 ### Start Phase 6
- PHASE="Verifying/Installing Dependancies"
+ PHASE="Dependancies"
  phaseheader $PHASE 
 
 # Install required tools for building from source
- if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mRunning the apt stuff\e[39m"; fi
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt update && apt upgrade -y\e[39m"
  apt update && apt upgrade -y
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full -y\e[39m"
  apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full -y
 
 # Install optional tools apt install htop nano
-# if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mRunning the extra apt stuff\e[39m"; fi
+# [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt install htop nano -y\e[39m"
 # apt install htop nano -y
 
 ### End Phase 6
@@ -98,45 +99,49 @@ inoutfooter() {
 
 ### Start Phase 5
  PHASE="Backup"
- phaseheader $PHASE
-
+ phaseheader $PHASE 
  if [ -d "$SCRIPTPATH/xmrig" ]
   then
    if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
     then
      # Remove last backup archive
-      echo "xmrig-build.7z.bak removed"
+      [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
       rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak
+      echo "xmrig-build.7z.bak removed"
     else
      echo "xmrig-build.7z.bak doesn't exist - Skipping Delete..."
    fi
    if [ -f "$SCRIPTPATH/xmrig/xmrig.bak" ]
     then
      # Remove last backup binary
-      echo "xmrig.bak removed"
+      [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
       rm $SCRIPTPATH/xmrig/xmrig.bak
+      echo "xmrig.bak removed"
     else
      echo "xmrig.bak doesn't exist - Skipping Delete..."
    fi
    if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z" ]
     then
      # Backup last archive
-      echo "xmrig-build.7z renamed to xmrig-build.7z.bak"
+      [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
       mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak
+      echo "xmrig-build.7z renamed to xmrig-build.7z.bak"
     else
      echo "xmrig-build.7z doesn't exist - Skipping Backup..."
    fi
    if [ -f "$SCRIPTPATH/xmrig/xmrig" ]
     then
      # Backup last binary
-      echo "xmrig renamed to xmrig.bak"
+      [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
       mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak
+      echo "xmrig renamed to xmrig.bak"
     else
      echo "xmrig doesn't exist - Skipping Backup..."
    fi
   else
   # Make xmrig folder if it doesn't exist
    echo "Creating xmrig directory..."
+   [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mkdir -p $SCRIPTPATH/xmrig\e[39m"
    mkdir -p $SCRIPTPATH/xmrig
  fi
 
@@ -144,47 +149,51 @@ inoutfooter() {
  phasefooter $PHASE
 
 ### Start Phase 4
- PHASE="Setting Up Source"
+ PHASE="Setup"
  phaseheader $PHASE
 
 # If a _source directory is found, remove it.
  if [ -d "$SCRIPTPATH/_source" ]
   then
+   [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm -r $SCRIPTPATH/_source\e[39m"
    rm -r $SCRIPTPATH/_source
  fi
 
 # Make new source folder
- if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mCreating _source directory\e[39m"; fi
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mkdir $SCRIPTPATH/_source\e[39m"
  mkdir $SCRIPTPATH/_source
 
 # Change working dir to source folder
- if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mEnter _source directory\e[39m"; fi
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH/_source\e[39m"
  cd $SCRIPTPATH/_source
 
 # Clone XMRig from github into source folder
- if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mCloning xmrig git\e[39m"; fi
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - git clone https://github.com/xmrig/xmrig.git\e[39m"
  git clone https://github.com/xmrig/xmrig.git
 
 # Change working dir to clone - Create build folder - Change working dir to build folder
- if [[ "$DEBUG" = "1" ]]; then echo -e "\e[96mEnter xmrig, make build, and enter build directories\e[39m"; fi
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd xmrig && mkdir build && cd build\e[39m"
  cd xmrig && mkdir build && cd build
 
 ### End Phase 4
  phasefooter $PHASE
 
 ### Start Phase 3
- PHASE="Building"
+ PHASE="Compiling/Building"
  phaseheader $PHASE
 
 # Setup build enviroment
- if [[ "$BUILD" = "7" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF; fi
- if [[ "$BUILD" = "8" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF; fi
- if [[ "$BUILD" = "0" ]]; then cmake .. -DCMAKE_BUILD_TYPE=Release; fi
+ [ $DEBUG -eq 1 ] && [ $BUILD -eq 7 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
+ [ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+ [ $DEBUG -eq 1 ] && [ $BUILD -eq 8 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
+ [ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+ [ $DEBUG -eq 1 ] && [ $BUILD -eq 0 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release\e[39m"
+ [ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release
 
 # Bypass make process if debug is enabled.
  if [[ "$DEBUG" = "1" ]]
   then
-   echo -e "\e[96mSkipping Build and touching xmrig\e[39m"
+   echo -e "\e[96m++ $PHASE - touch xmrig\e[39m"
    touch xmrig
   else
    make
@@ -194,48 +203,54 @@ inoutfooter() {
  phasefooter $PHASE
 
 ### Start Phase 2
- PHASE="Compressing and Moving"
+ PHASE="Compressing/Moving"
  phaseheader $PHASE
 
 # Compress built xmrig into archive
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - 7z a xmrig-build.7z $SCRIPTPATH/xmrig\e[39m"
  7z a xmrig-build.7z $SCRIPTPATH/xmrig
 
 # Copy archive to xmrig folder
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z\e[39m"
  cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z
 
 # Copy built xmrig to xmrig folder
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig\e[39m"
  cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
 
 # End Phase 2
  phasefooter $PHASE
 
 # Start Phase 1
- PHASE="Cleaning Up"
+ PHASE="Cleanup"
  phaseheader $PHASE
 
 # Change working dir back to root
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH\e[39m"
  cd $SCRIPTPATH
 
 # Remove source folder
- echo "Source directory removed."
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm -r _source\e[39m"
  rm -r _source
+ echo "Source directory removed."
 
 # Create start-example.sh
  if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]
   then
-   echo "start-example.sh created."
-
+   [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF\e[39m"
 cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF
 #! /bin/bash
 
 screen -wipe
-screen -dm $SCRIPTPATH/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cpu.log --donate-level 1 --rig-id <rig_name>
+screen -dm $SCRIPTPATH/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cpu.log --donate-level 1 --rig-id <rig_name> -k --verbose
 screen -r
 EOF
+   echo "start-example.sh created."
 
    # Make start-example.sh executable
-    echo "start-example.sh made executable."
+    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/xmrig/start-example.sh\e[39m"
     chmod +x $SCRIPTPATH/xmrig/start-example.sh
+    echo "start-example.sh made executable."
   fi
 
 # End Phase 1
