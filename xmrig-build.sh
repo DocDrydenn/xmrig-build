@@ -1,5 +1,6 @@
 #!/bin/bash
-VERS="1.7"
+
+VERS="v1.8"
 
 # Clear screen
  clear
@@ -40,7 +41,7 @@ VERS="1.7"
  inoutheader() {
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
-  echo " XMRig Build Script v$VERS"
+  echo " XMRig Build Script $VERS"
 
   [ $BUILD -eq 7 ] && echo " for ARMv7"
   [ $BUILD -eq 8 ] && echo " for ARMv8"
@@ -67,6 +68,9 @@ VERS="1.7"
  BUILD=0
  DEBUG=0
 
+# Check latest version from github
+ LVER="$(curl -sI "https://github.com/DocDrydenn/xmrig-build/releases/latest" | grep -Po 'tag\/\K(v\S+)')"
+
 # Parse Commandline Arguments
  [ "$1" = "7" ] && BUILD=7
  [ "$1" = "8" ] && BUILD=8
@@ -77,8 +81,25 @@ VERS="1.7"
  inoutheader
  inoutfooter
 
-# Pause for Effect LOL
- sleep 5
+# New Version Notification/Prompt
+ if [[ "$VERS" != "$LVER" ]]
+  then
+   echo -e "\e[5m\e[44m++ New Version Detected ++\e[39m\e[0m"
+   echo
+   echo " $VERS - Current"
+   echo " $LVER - Online"
+   echo
+   read -r -p "Do you want to continue anyway? (not recommended) [y/N]" response
+   response=${response,,} # tolower
+   if [[ $response =~ ^(no|n| ) ]] || [[ -z $response ]]
+    then
+     echo "Script Aborted."
+     exit 0
+    else
+     echo "Continuing..."
+     sleep 3
+   fi
+ fi
 
 ### Start Phase 6
  PHASE="Dependancies"
