@@ -3,6 +3,13 @@ Simple automated script to build XMRig from source on x86-64, ARMv7, and ARMv8 d
 
 Should work for just about any device running a Debian-based Linux.
 
+I've tested on the following with success:
+- Ubuntu 18.04 (Bionic) [x86-64] [ARMv7] [ARMv8]
+- Ubuntu 20.04 (Focal) [x86-64]
+- Debian 9 (Stretch) [x86-64]
+- Raspbian (Stretch) [ARMv7]
+- Armbian (Stretch) [ARMv7] [ARMv8]
+
 ![Alt text](/xmrig-armbuild.JPG?raw=true "Screenshot")
 
 ### x86-64 (Default)
@@ -19,14 +26,14 @@ Usage: `./xmrig-build.sh #`
 - apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full -y
 
 #### Backup...
-- rm /root/xmrig/xmrig-build.7z.bak
-- rm /root/xmrig/xmrig.bak
-- mv /root/xmrig/xmrig-build.7z /root/xmrig/xmrig-build.7z.bak
-- mv /root/xmrig/xmrig /root/xmrig/xmrig.bak
+- rm ./xmrig/xmrig-build.7z.bak
+- rm ./xmrig/xmrig.bak
+- mv ./xmrig/xmrig-build.7z ./xmrig/xmrig-build.7z.bak
+- mv ./xmrig/xmrig ./xmrig/xmrig.bak
 
 #### Setup...
-- mkdir /root/_source
-- cd /root/_source
+- mkdir ./_source
+- cd ./_source
 - git clone https://github.com/xmrig/xmrig.git
 - cd xmrig && mkdir build && cd build
 
@@ -36,12 +43,12 @@ Usage: `./xmrig-build.sh #`
 - make
 
 #### Compressing/Moving...
-- 7z a xmrig-build.7z /root/xmrig
-- cp xmrig-build.7z /root/xmrig/xmrig-build.7z
-- cp /root/_source/xmrig/build/xmrig /root/xmrig/xmrig
+- 7z a xmrig-build.7z ./xmrig
+- cp xmrig-build.7z ./xmrig/xmrig-build.7z
+- cp ./_source/xmrig/build/xmrig ./xmrig/xmrig
 
 #### Cleanup...
-- cd /root
+- cd ./
 - rm -r _source
 
 Upon successful completion of this script, you should end up with an `xmrig` directory with the following contents:
