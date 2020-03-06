@@ -108,8 +108,8 @@ VERS="v1.8"
 # Install required tools for building from source
  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt update && apt upgrade -y\e[39m"
  apt update && apt upgrade -y
- [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full -y\e[39m"
- apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full -y
+ [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full curl -y\e[39m"
+ apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full curl -y
 
 # Install optional tools apt install htop nano
 # [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt install htop nano -y\e[39m"
