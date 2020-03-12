@@ -1,5 +1,7 @@
 # xmrig-build
-Simple automated script to build XMRig from source on x86-64, ARMv7, and ARMv8 devices.
+Simple automated script to build XMRig from source on x86-64, ARMv7, and ARMv8 devices. 
+
+I made it to speed up the my process for my installing and updating XMRig on my devices.
 
 Should work for just about any device running a Debian-based Linux.
 
