@@ -17,7 +17,7 @@ Usage: `./xmrig-build.sh` (No argument or anything other than `7` and `8`)
 
 ### ARMv7 & ARMv8
 Usage: `./xmrig-build.sh #` 
-(where `#` is a required argument. `7` for ARMv7 or `8` for ARMv8)
+(where `#` is a `7` for ARMv7 or `8` for ARMv8)
 
 ## What Does This Script Do?
 
@@ -38,7 +38,8 @@ Usage: `./xmrig-build.sh #`
 - cd xmrig && mkdir build && cd build
 
 #### Compiling/Building...
-- For ARMv7 and ARMv8 - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+- For ARMv7 - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+- For ARMv8 - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
 - For x86-64 - cmake .. -DCMAKE_BUILD_TYPE=Release
 - make
 
