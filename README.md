@@ -10,6 +10,8 @@ I've tested on the following with success:
 - Raspbian (Stretch) [ARMv7]
 - Armbian (Stretch) [ARMv7] [ARMv8]
 
+* Fails on Raspbian (Buster)... still testing.
+
 ![Alt text](/xmrig-armbuild.JPG?raw=true "Screenshot")
 
 ### x86-64 (Default)
