@@ -12,7 +12,7 @@ I've tested on the following with success:
 
 * Fails on Raspbian (Buster)... still testing.
 
-![Alt text](/xmrig-armbuild.JPG?raw=true "Screenshot")
+![Alt text](/xmrig-build.jpg?raw=true "Screenshot")
 
 ### x86-64 (Default)
 Usage: `./xmrig-build.sh` (No argument or anything other than `7` and `8`)
