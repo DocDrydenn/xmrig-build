@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v1.10"
+VERS="v1.11"
 
 # Clear screen
 clear
@@ -79,8 +79,7 @@ inoutheader
 inoutfooter
 
 # Check for curl
-if [[ $(which curl &>/dev/null; echo $?) != "1" ]] # Production
-#if [[ $(which curl &>/dev/null; echo $?) = "1" ]] # Testing
+if [[ $(which curl &>/dev/null; echo $?) != "0" ]] # Production
 then
   echo "Warning: CURL not found."
   echo
