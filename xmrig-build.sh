@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v1.11"
+VERS="v1.2"
 
 # Clear screen
 clear
@@ -10,13 +10,13 @@ errexit() {
   # Draw 5 lines of + and message
   for i in {1..5}; do echo "+"; done
   echo -e "\e[91mError raised! Cleaning Up and Exiting.\e[39m"
-  
+
   # Remove _source directory if found.
   if [ -d "$SCRIPTPATH/_source" ]; then rm -r $SCRIPTPATH/_source; fi
-  
+
   # Remove xmrig directory if found.
   if [ -d "$SCRIPTPATH/xmrig" ]; then rm -r $SCRIPTPATH/xmrig; fi
-  
+
   # Dirty Exit
   exit 1
 }
@@ -43,10 +43,11 @@ inoutheader() {
   echo -e "==================================================\e[39m"
   echo " XMRig Build Script $VERS"
 
-  [ $BUILD -eq 7 ] && echo " for ARMv7"
-  [ $BUILD -eq 8 ] && echo " for ARMv8"
-  [ $BUILD -eq 0 ] && echo " for x86-64"
+  [ $BUILD -eq 7 ] && echo -n " for ARMv7" && [ $STATIC -eq 1 ] && echo " (static)"
+  [ $BUILD -eq 8 ] && echo -n " for ARMv8" && [ $STATIC -eq 1 ] && echo " (static)"
+  [ $BUILD -eq 0 ] && echo -n " for x86-64" && [ $STATIC -eq 1 ] && echo " (static)"
 
+  echo
   echo " by DocDrydenn @ getpimp.org"
   echo
 
@@ -67,16 +68,47 @@ trap 'errexit' ERR
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 BUILD=0
 DEBUG=0
+STATIC=0
+USAGE=0
 
 # Parse Commandline Arguments
-[ "$1" = "7" ] && BUILD=7
-[ "$1" = "8" ] && BUILD=8
-[ "$1" = "d" ] && DEBUG=1
-[ "$2" = "d" ] && DEBUG=1
+([ "$1" = "7" ] || [ "$1" = "-7" ]) && BUILD=7
+([ "$1" = "8" ] || [ "$1" = "-8" ]) && BUILD=8
+
+([ "$1" = "d" ] || [ "$1" = "-d" ]) && DEBUG=1
+([ "$2" = "d" ] || [ "$2" = "-d" ]) && DEBUG=1
+([ "$3" = "d" ] || [ "$3" = "-d" ]) && DEBUG=1
+
+([ "$1" = "-s" ] || [ "$1" = "s" ]) && STATIC=1
+([ "$2" = "-s" ] || [ "$2" = "s" ]) && STATIC=1
+([ "$3" = "-s" ] || [ "$3" = "s" ]) && STATIC=1
+
+([ "$1" = "-h" ] || [ "$1" = "h" ]) && USAGE=1
+([ "$2" = "-h" ] || [ "$2" = "h" ]) && USAGE=1
+([ "$3" = "-h" ] || [ "$3" = "h" ]) && USAGE=1
+([ "$4" = "-h" ] || [ "$4" = "h" ]) && USAGE=1
 
 # Opening Intro
 inoutheader
 inoutfooter
+
+if [ $USAGE -eq 1 ]
+then
+  echo " Usage:  xmrig-build [-dhs] -<0|7|8>"
+  echo
+  echo "    -0 | 0 | <blank>      - x86-64"
+  echo "    -7 | 7                - ARMv7"
+  echo "    -8 | 8                - ARMv8"
+  echo
+  echo "    -s | s                - Build Static"
+  echo
+  echo "    -h | h                - Display (this) Usage Output"
+  echo "    -d | d                - Enable Debug Output"
+  echo
+inoutheader
+inoutfooter
+  exit 0
+fi
 
 # Check for curl
 if [[ $(which curl &>/dev/null; echo $?) != "0" ]] # Production
@@ -141,7 +173,7 @@ fi
 
 ### Start Phase 6
 PHASE="Dependancies"
-phaseheader $PHASE 
+phaseheader $PHASE
 
 # Install required tools for building from source
 [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt update && apt upgrade -y\e[39m"
@@ -154,7 +186,7 @@ phasefooter $PHASE
 
 ### Start Phase 5
 PHASE="Backup"
-phaseheader $PHASE 
+phaseheader $PHASE
 if [ -d "$SCRIPTPATH/xmrig" ]
 then
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
@@ -226,9 +258,20 @@ cd $SCRIPTPATH/_source
 [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - git clone https://github.com/xmrig/xmrig.git\e[39m"
 git clone https://github.com/xmrig/xmrig.git
 
-# Change working dir to clone - Create build folder - Change working dir to build folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd xmrig && mkdir build && cd build\e[39m"
-cd xmrig && mkdir build && cd build
+# Change working dir to clone - Create build folder
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd xmrig && mkdir build\e[39m"
+cd xmrig && mkdir build
+
+# Building STATIC requires dependancies to be built via provided xmrig script.
+if [ $STATIC -eq 1 ]
+then
+  [ $DEBUG -eq 1] && echo -e "\e[96m++ $PHASE - STATIC - cd scripts && ./build_deps.sh\e[39m"
+  cd scripts && ./build_deps.sh
+fi
+
+# Change to build directory
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd ../build\e[39m"
+cd ../build
 
 ### End Phase 4
 phasefooter $PHASE
@@ -238,15 +281,25 @@ PHASE="Compiling/Building"
 phaseheader $PHASE
 
 # Setup build enviroment
-[ $DEBUG -eq 1 ] && [ $BUILD -eq 7 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
-[ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
-[ $DEBUG -eq 1 ] && [ $BUILD -eq 8 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
-[ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
-[ $DEBUG -eq 1 ] && [ $BUILD -eq 0 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release\e[39m"
-[ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release
+if [ $STATIC -eq 1 ]
+then
+  [ $DEBUG -eq 1 ] && [ $BUILD -eq 7 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps\e[39m"
+  [ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps
+  [ $DEBUG -eq 1 ] && [ $BUILD -eq 8 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps\e[39m"
+  [ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps
+  [ $DEBUG -eq 1 ] && [ $BUILD -eq 0 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DXMRIG_DEPS=scripts/deps\e[39m"
+  [ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DXMRIG_DEPS=scripts/deps
+else
+  [ $DEBUG -eq 1 ] && [ $BUILD -eq 7 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
+  [ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+  [ $DEBUG -eq 1 ] && [ $BUILD -eq 8 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
+  [ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+  [ $DEBUG -eq 1 ] && [ $BUILD -eq 0 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release\e[39m"
+  [ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release
+fi
 
 # Bypass make process if debug is enabled.
-if [[ "$DEBUG" = "1" ]]
+if [ $DEBUG -eq 1 ]
 then
   echo -e "\e[96m++ $PHASE - touch xmrig\e[39m"
   touch xmrig
