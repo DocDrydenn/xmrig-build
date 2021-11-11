@@ -23,6 +23,11 @@ Usage: `./xmrig-build.sh` (No argument or anything other than `7` and `8`)
 Usage: `./xmrig-build.sh #` 
 (where `#` is a `7` for ARMv7 or `8` for ARMv8)
 
+### Misc
+- `-h` will show script USAGE output
+- `-d` will give DEBUG output (and bypass the building process) [Does not make a working binary]
+- `-s` will attempt to build a STATIC binary (Worked for x86-64. ARM needs further testing...)
+ 
 ## What Does This Script Do?
 
 #### Dependancies...
