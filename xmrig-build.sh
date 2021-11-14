@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v1.20"
+VERS="v1.21"
 
 # Clear screen
 clear
@@ -265,13 +265,14 @@ cd xmrig && mkdir build
 # Building STATIC requires dependancies to be built via provided xmrig script.
 if [ $STATIC -eq 1 ]
 then
-  [ $DEBUG -eq 1] && echo -e "\e[96m++ $PHASE - STATIC - cd scripts && ./build_deps.sh\e[39m"
+  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - STATIC - cd scripts && ./build_deps.sh and cd ..\e[39m"
   cd scripts && ./build_deps.sh
+  cd ..
 fi
 
 # Change to build directory
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd ../build\e[39m"
-cd ../build
+[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd build\e[39m"
+cd build
 
 ### End Phase 4
 phasefooter $PHASE
