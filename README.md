@@ -1,5 +1,5 @@
 # xmrig-build
-Simple automated script to build XMRig from source on x86-64, ARMv7, and ARMv8 devices. 
+Simple automated script to build XMRig (dynamic or static) from source on x86-64, ARMv7, and ARMv8 devices. 
 
 I made it to speed up the my process for my installing and updating XMRig on my devices.
 
@@ -7,14 +7,19 @@ Should work for just about any device running a Debian-based Linux.
 
 I've tested on the following with success:
 - Ubuntu 18.04 (Bionic) [x86-64] [ARMv7] [ARMv8]
-- Ubuntu 20.04 (Focal) [x86-64]
+- Ubuntu 20.04 (Focal) [x86-64] [ARMv7] [ARMv8]
 - Debian 9 (Stretch) [x86-64]
-- Raspbian (Stretch) [ARMv7]
+- Raspbian (Stretch) [ARMv7] [ARMv8]
 - Armbian (Stretch) [ARMv7] [ARMv8]
 
-* Fails on Raspbian (Buster)... still testing.
+* Fails on Raspbian (Buster) and Raspberry Pi OS... I am unable to determine exactly why.
 
 ![Alt text](/xmrig-build.jpg?raw=true "Screenshot")
+
+### Flags
+- `-h` will show script USAGE output
+- `-d` will give DEBUG output (and bypass the building process) [This will not make a working binary and is only for troubleshooting the rest of the script.]
+- `-s` will attempt to build a STATIC binary (Worked for x86-64. ARM needs further testing...)
 
 ### x86-64 (Default)
 Usage: `./xmrig-build.sh` (No argument or anything other than `7` and `8`)
@@ -23,12 +28,9 @@ Usage: `./xmrig-build.sh` (No argument or anything other than `7` and `8`)
 Usage: `./xmrig-build.sh #` 
 (where `#` is a `7` for ARMv7 or `8` for ARMv8)
 
-### Misc
-- `-h` will show script USAGE output
-- `-d` will give DEBUG output (and bypass the building process) [Does not make a working binary]
-- `-s` will attempt to build a STATIC binary (Worked for x86-64. ARM needs further testing...)
- 
 ## What Does This Script Do?
+
+[NOTE: The below is from early versions and isn't updated to the current release. I have no plans to keep this part up-to-date, however, I'm leaving this here to give the overall idea of what the script does. Please review the actual release script for the exact specifics.]
 
 #### Dependancies...
 - apt update && apt upgrade -y
