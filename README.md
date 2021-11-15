@@ -19,7 +19,7 @@ I've tested on the following with success:
 ### Flags
 - `-h` will show script USAGE output
 - `-d` will give DEBUG output (and bypass the building process) [This will not make a working binary and is only for troubleshooting the rest of the script.]
-- `-s` will attempt to build a STATIC binary (Worked for x86-64. ARM needs further testing...)
+- `-s` will attempt to build a STATIC binary (see list above for confirmed working OS's)
 
 ### x86-64 (Default)
 Usage: `./xmrig-build.sh` (No argument or anything other than `7` and `8`)
