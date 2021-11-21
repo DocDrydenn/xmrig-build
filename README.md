@@ -9,6 +9,7 @@ I've tested on the following with success:
 - Ubuntu 18.04 (Bionic) [x86-64] [ARMv7] [ARMv8]
 - Ubuntu 20.04 (Focal) [x86-64] [ARMv7] [ARMv8]
 - Debian 9 (Stretch) [x86-64]
+- Debian 10 (Buster) [x86-64]
 - Raspbian (Stretch) [ARMv7] [ARMv8]
 - Armbian (Stretch) [ARMv7] [ARMv8]
 
