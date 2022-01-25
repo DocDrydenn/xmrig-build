@@ -18,6 +18,13 @@ I've tested on the following with success:
 
 * Fails on Raspbian *(Buster)* and Raspberry Pi OS... I am unable to determine exactly why.
 
+## Issues:
+Feel free to raise issues you might find with my script, however, it must be noted that failures during the actual xmrig build process are outside of this script's control.
+
+This script uses the exact build processes documented by XMRig. All build failure issues should be directed to the XMRig's Git.
+
+I have seen times where a dynamic build fails, but a static build will pass (and vice versa). I've seen builds pass for one XMRig version and fail for another... it all depends on what's going on over at the XMRig repo.
+
 ## Requirements:
 This script will check for and install *(via apt)* the following packages/tools:
 
@@ -59,14 +66,16 @@ This script is self-updating. The self-update routine uses git commands to make 
 `./xmrig-build.sh 8 -s`
 
 ## Result:
-Upon completion, this script will create a directory `./scriptpath/xmrig` and will have the following files inside:
+Upon completion, this script will create a directory `./$scriptpath/xmrig` and will have the following files inside:
 - xmrig - XMRig binary
 - start-example.sh - Example XMRig startup script
 - xmrig-build.7z - 7zip archive of above files for easy "transport" to a new machine/location.
 
-If this script has been run in the past, prior to building a new binary, it will make a backups of the previous XMRig build resulting in two additional files inside the `xmrig` directory.
+If this script has been run in the past, prior to building a new binary, it will make backups of the previous XMRig build files resulting in two additional files inside the `xmrig` directory, just incase one might need to revert to a previous build *(see Issues section above)*. 
 - xmrig.bak - previous XMRig binary
 - xmrig-build.7z.bak - previous XMRig backup archive
+
+**Note: This "backup" function is rolling... meaning each run of the script will push off the last. If you wish to keep the backups, I suggest you copy them to another location prior to re-running the script.**
 
 ## Screenshot:
 ![Screenshot 2022-01-24 202425](https://user-images.githubusercontent.com/48564375/150893727-af9d5d0e-3d48-4519-aad0-f7cf5cb34661.png)
