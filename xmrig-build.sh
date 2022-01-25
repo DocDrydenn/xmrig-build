@@ -211,8 +211,6 @@ phasefooter $PHASE
 PHASE="Backup"
 phaseheader $PHASE
 #===========================================================================================================================================
-exit 0
-
 if [ -d "$SCRIPTPATH/xmrig" ]
 then
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
