@@ -197,7 +197,10 @@ phasefooter $PHASE
 PHASE="Dependancies"
 phaseheader $PHASE
 #===========================================================================================================================================
+echo "Updating..."
 apt update
+echo
+echo "Checking..."
 packages
 
 ### End Phase 6
