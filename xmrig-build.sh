@@ -458,9 +458,9 @@ phasefooter $PHASE
 #===========================================================================================================================================
 # Close Out
 inoutheader
-echo " Folder Location: $SCRIPTPATH/xmrig/"
-echo " Bin: $SCRIPTPATH/xmrig/xmrig"
-echo " Example Start Script: $SCRIPTPATH/xmrig/start-example.sh"
+echo -e "\e[33m Folder Location: $SCRIPTPATH/xmrig/\e[39m"
+echo -e "\e[33m Bin: $SCRIPTPATH/xmrig/xmrig\e[39m"
+echo -e "\e[33m Example Start Script: $SCRIPTPATH/xmrig/start-example.sh\e[39m"
 echo
 inoutfooter
 
