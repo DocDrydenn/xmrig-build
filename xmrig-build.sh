@@ -208,14 +208,12 @@ phasefooter $PHASE
 PHASE="Dependancies"
 phaseheader $PHASE
 #===========================================================================================================================================
-echo -e "\e[33mRefreshing Packages...\e[39m"
 if [ $DEBUG -eq 1 ]; then
   echo -e "\e[96m++ $PHASE - apt update\e[39m"
 else
   apt update
 fi
 echo
-echo -e "\e[33mChecking Required Packages...\e[39m"
 packages
 
 ### End Phase 6
@@ -231,64 +229,54 @@ then
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
   then
     # Remove last backup archive
-    echo -e "\e[33mRemove last backup archive:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
     else
       rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak
     fi
-    echo -e "\e[33mxmrig-build.7z.bak removed\e[39m"
   else
     echo -e "\e[33mxmrig-build.7z.bak doesn't exist - Skipping...\e[39m"
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig.bak" ]
   then
     # Remove last backup binary
-    echo -e "\e[33mRemove last backup binary:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
     else
       rm $SCRIPTPATH/xmrig/xmrig.bak
     fi
-    echo -e "\e[33mxmrig.bak removed\e[39m"
   else
     echo -e "\e[33mxmrig.bak doesn't exist - Skipping...\e[39m"
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z" ]
   then
     # Backup last archive
-    echo -e "\e[33mBackup last archive:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
     else
       mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak
     fi
-    echo -e "\e[33mxmrig-build.7z renamed to xmrig-build.7z.bak\e[39m"
   else
     echo -e "\e[33mxmrig-build.7z doesn't exist - Skipping...\e[39m"
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig" ]
   then
     # Backup last binary
-    echo -e "\e[33mBackup last binary:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
     else
       mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak
     fi
-    echo -e "\e[33mxmrig renamed to xmrig.bak\e[39m"
   else
     echo -e "\e[33mxmrig doesn't exist - Skipping Backup...\e[39m"
   fi
 else
   # Make xmrig folder if it doesn't exist
-  echo -e "\e[33mCreating xmrig directory...\e[39m"
   if [ $DEBUG -eq 1 ]; then
     echo -e "\e[96m++ $PHASE - mkdir -p $SCRIPTPATH/xmrig\e[39m"
   else
     mkdir -p $SCRIPTPATH/xmrig
   fi
-  echo -e "\e[33mxmrig directory created.\e[39m"
 fi
 
 ### End Phase 5
@@ -440,7 +428,6 @@ if [ $DEBUG -eq 1 ]; then
   echo -e "\e[96m++ $PHASE - rm -r _source\e[39m"
 else
   rm -r _source
-  echo "Source directory removed."
 fi
 
 # Create start-example.sh
@@ -455,14 +442,12 @@ screen -wipe
 screen -dm $SCRIPTPATH/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cpu.log --donate-level 1 --rig-id <rig_name> -k --verbose
 screen -r
 EOF
-    echo "start-example.sh created."
 
     # Make start-example.sh executable
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/xmrig/start-example.sh\e[39m"
     else
       chmod +x $SCRIPTPATH/xmrig/start-example.sh
-      echo "start-example.sh made executable."
     fi
   fi
 fi
