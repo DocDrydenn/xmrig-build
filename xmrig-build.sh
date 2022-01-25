@@ -115,11 +115,11 @@ packages() {
     fi
   done
   if [ " " != "$install_pkgs" ]; then
-  echo
-  #echo "1a. Installing Missing Packages:"
-  #echo
-  #apt --dry-run install $install_pkgs #debug
-  apt install -y $install_pkgs
+    echo
+    if [ $DEBUG -eq 1 ]; then
+      apt --dry-run -y install $install_pkgs
+    else
+    apt install -y $install_pkgs
   fi
 }
 
@@ -226,35 +226,51 @@ then
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
   then
     # Remove last backup archive
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
-    rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak
+    echo "Remove last backup archive:"
+    if [ $DEBUG -eq 1 ]; then
+      echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
+    else
+      rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak
+    fi
     echo "xmrig-build.7z.bak removed"
   else
-    echo "xmrig-build.7z.bak doesn't exist - Skipping Delete..."
+    echo "xmrig-build.7z.bak doesn't exist - Skipping..."
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig.bak" ]
   then
     # Remove last backup binary
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
-    rm $SCRIPTPATH/xmrig/xmrig.bak
+    echo "Remove last backup binary:"
+    if [ $DEBUG -eq 1 ]; then
+      echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
+    else
+      rm $SCRIPTPATH/xmrig/xmrig.bak
+    fi
     echo "xmrig.bak removed"
   else
-    echo "xmrig.bak doesn't exist - Skipping Delete..."
+    echo "xmrig.bak doesn't exist - Skipping..."
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z" ]
   then
     # Backup last archive
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
-    mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak
+    echo "Backup last archive:"
+    if [ $DEBUG -eq 1 ]; then
+      echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
+    else
+      mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak
+    fi
     echo "xmrig-build.7z renamed to xmrig-build.7z.bak"
   else
-    echo "xmrig-build.7z doesn't exist - Skipping Backup..."
+    echo "xmrig-build.7z doesn't exist - Skipping..."
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig" ]
   then
     # Backup last binary
-    [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
-    mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak
+    echo "Backup last binary:"
+    if [ $DEBUG -eq 1 ]; then
+      echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
+    else
+      mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak
+    fi
     echo "xmrig renamed to xmrig.bak"
   else
     echo "xmrig doesn't exist - Skipping Backup..."
@@ -262,8 +278,12 @@ then
 else
   # Make xmrig folder if it doesn't exist
   echo "Creating xmrig directory..."
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mkdir -p $SCRIPTPATH/xmrig\e[39m"
-  mkdir -p $SCRIPTPATH/xmrig
+  if [ $DEBUG -eq 1 ]; then
+    echo -e "\e[96m++ $PHASE - mkdir -p $SCRIPTPATH/xmrig\e[39m"
+  else
+    mkdir -p $SCRIPTPATH/xmrig
+  fi
+  echo "xmrig directory created."
 fi
 
 ### End Phase 5
@@ -278,37 +298,58 @@ phaseheader $PHASE
 # If a _source directory is found, remove it.
 if [ -d "$SCRIPTPATH/_source" ]
 then
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm -r $SCRIPTPATH/_source\e[39m"
-  rm -r $SCRIPTPATH/_source
+  if [ $DEBUG -eq 1 ]; then
+    echo -e "\e[96m++ $PHASE - rm -r $SCRIPTPATH/_source\e[39m"
+  else
+    rm -r $SCRIPTPATH/_source
+  fi
 fi
 
 # Make new source folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - mkdir $SCRIPTPATH/_source\e[39m"
-mkdir $SCRIPTPATH/_source
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - mkdir $SCRIPTPATH/_source\e[39m"
+else
+  mkdir $SCRIPTPATH/_source
+fi
 
 # Change working dir to source folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH/_source\e[39m"
-cd $SCRIPTPATH/_source
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH/_source\e[39m"
+else
+  cd $SCRIPTPATH/_source
+fi
 
 # Clone XMRig from github into source folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - git clone https://github.com/xmrig/xmrig.git\e[39m"
-git clone https://github.com/xmrig/xmrig.git
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - git clone https://github.com/xmrig/xmrig.git\e[39m"
+else
+  git clone https://github.com/xmrig/xmrig.git
+fi
 
 # Change working dir to clone - Create build folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd xmrig && mkdir build\e[39m"
-cd xmrig && mkdir build
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - cd xmrig && mkdir build\e[39m"
+else
+  cd xmrig && mkdir build
+fi
 
 # Building STATIC requires dependancies to be built via provided xmrig script.
 if [ $STATIC -eq 1 ]
 then
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - STATIC - cd scripts && ./build_deps.sh and cd ..\e[39m"
-  cd scripts && ./build_deps.sh
-  cd ..
+  if [ $DEBUG -eq 1 ]; then
+    echo -e "\e[96m++ $PHASE - STATIC - cd scripts && ./build_deps.sh and cd ..\e[39m"
+  else
+    cd scripts && ./build_deps.sh
+    cd ..
+  fi
 fi
 
 # Change to build directory
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd build\e[39m"
-cd build
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - cd build\e[39m"
+else
+  cd build
+fi
 
 ### End Phase 4
 phasefooter $PHASE
@@ -322,25 +363,24 @@ phaseheader $PHASE
 if [ $STATIC -eq 1 ]
 then
   [ $DEBUG -eq 1 ] && [ $BUILD -eq 7 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps\e[39m"
-  [ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps
+  [ $DEBUG -eq 0 ] && [ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps
   [ $DEBUG -eq 1 ] && [ $BUILD -eq 8 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps\e[39m"
-  [ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps
+  [ $DEBUG -eq 0 ] && [ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF -DXMRIG_DEPS=scripts/deps
   [ $DEBUG -eq 1 ] && [ $BUILD -eq 0 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DXMRIG_DEPS=scripts/deps\e[39m"
-  [ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DXMRIG_DEPS=scripts/deps
+  [ $DEBUG -eq 0 ] && [ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DXMRIG_DEPS=scripts/deps
 else
   [ $DEBUG -eq 1 ] && [ $BUILD -eq 7 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
-  [ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+  [ $DEBUG -eq 0 ] && [ $BUILD -eq 7 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
   [ $DEBUG -eq 1 ] && [ $BUILD -eq 8 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=7 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF\e[39m"
-  [ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
+  [ $DEBUG -eq 0 ] && [ $BUILD -eq 8 ] && cmake .. -DCMAKE_BUILD_TYPE=Release -DARM_TARGET=8 -DWITH_OPENCL=OFF -DWITH_CUDA=OFF -DWITH_HWLOC=OFF -DWITH_ASM=OFF
   [ $DEBUG -eq 1 ] && [ $BUILD -eq 0 ] && echo -e "\e[96m++ $PHASE - cmake .. -DCMAKE_BUILD_TYPE=Release\e[39m"
-  [ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release
+  [ $DEBUG -eq 0 ] && [ $BUILD -eq 0 ] && cmake .. -DCMAKE_BUILD_TYPE=Release
 fi
 
 # Bypass make process if debug is enabled.
-if [ $DEBUG -eq 1 ]
-then
-  echo -e "\e[96m++ $PHASE - touch xmrig\e[39m"
-  touch xmrig
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - make\e[39m"
+  #touch xmrig
 else
   make
 fi
@@ -354,16 +394,25 @@ PHASE="Compressing/Moving"
 phaseheader $PHASE
 #===========================================================================================================================================
 # Compress built xmrig into archive
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - 7z a xmrig-build.7z $SCRIPTPATH/xmrig\e[39m"
-7z a xmrig-build.7z $SCRIPTPATH/xmrig
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - 7z a xmrig-build.7z $SCRIPTPATH/xmrig\e[39m"
+else
+  7z a xmrig-build.7z $SCRIPTPATH/xmrig
+fi
 
 # Copy archive to xmrig folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z\e[39m"
-cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z\e[39m"
+else
+  cp xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z
+fi
 
 # Copy built xmrig to xmrig folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig\e[39m"
-cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig\e[39m"
+else
+  cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
+fi
 
 # End Phase 2
 phasefooter $PHASE
@@ -375,19 +424,27 @@ phaseheader $PHASE
 #===========================================================================================================================================
 
 # Change working dir back to root
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH\e[39m"
-cd $SCRIPTPATH
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH\e[39m"
+else
+  cd $SCRIPTPATH
+fi
 
 # Remove source folder
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - rm -r _source\e[39m"
-rm -r _source
-echo "Source directory removed."
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - rm -r _source\e[39m"
+else
+  rm -r _source
+  echo "Source directory removed."
+fi
 
 # Create start-example.sh
 if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]
 then
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF\e[39m"
-cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF
+  if [ $DEBUG -eq 1 ]; then
+    echo -e "\e[96m++ $PHASE - cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF\e[39m"
+  else
+    cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF
 #! /bin/bash
 
 screen -wipe
@@ -397,9 +454,12 @@ EOF
   echo "start-example.sh created."
 
   # Make start-example.sh executable
-  [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/xmrig/start-example.sh\e[39m"
-  chmod +x $SCRIPTPATH/xmrig/start-example.sh
-  echo "start-example.sh made executable."
+  if [ $DEBUG -eq 1 ]; then
+    echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/xmrig/start-example.sh\e[39m"
+  else
+    chmod +x $SCRIPTPATH/xmrig/start-example.sh
+    echo "start-example.sh made executable."
+  fi
 fi
 
 # End Phase 1
