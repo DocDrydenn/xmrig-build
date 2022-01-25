@@ -24,9 +24,9 @@ BRANCH="develop"
 usage_example() {
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
-  echo " XMRig Build Script $VERS"
+  echo -e "\e[33m XMRig Build Script $VERS\e[39m"
   echo
-  echo " by DocDrydenn @ getpimp.org"
+  echo -e "\e[33m by DocDrydenn\e[39m"
   echo
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
@@ -160,14 +160,14 @@ phasefooter() {
 inoutheader() {
   echo -e "\e[32m=================================================="
   echo -e "==================================================\e[39m"
-  echo " XMRig Build Script $VERS"
+  echo -e "\e[33m XMRig Build Script $VERS\e[39m"
 
-  [ $BUILD -eq 7 ] && echo -n " for ARMv7" && [ $STATIC -eq 1 ] && echo " (static)"
-  [ $BUILD -eq 8 ] && echo -n " for ARMv8" && [ $STATIC -eq 1 ] && echo " (static)"
-  [ $BUILD -eq 0 ] && echo -n " for x86-64" && [ $STATIC -eq 1 ] && echo " (static)"
+  [ $BUILD -eq 7 ] && echo -ne "\e[33m for ARMv7\e[39m" && [ $STATIC -eq 1 ] && echo -e "\e[33m (static)\e[39m"
+  [ $BUILD -eq 8 ] && echo -ne "\e[33m for ARMv8\e[39m" && [ $STATIC -eq 1 ] && echo -e "\e[33m (static)\e[39m"
+  [ $BUILD -eq 0 ] && echo -ne "\e[33m for x86-64\e[39m" && [ $STATIC -eq 1 ] && echo -e "\e[33m (static)\e[39m"
 
   echo
-  echo " by DocDrydenn @ getpimp.org"
+  echo -e "\e[33m by DocDrydenn\e[39m"
   echo
 
   if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SIMULATION ONLY ++\e[39m\e[0m"; echo; fi
