@@ -119,7 +119,8 @@ packages() {
     if [ $DEBUG -eq 1 ]; then
       apt --dry-run -y install $install_pkgs
     else
-    apt install -y $install_pkgs
+      apt install -y $install_pkgs
+    fi
   fi
 }
 
