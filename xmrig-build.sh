@@ -21,6 +21,15 @@ BRANCH="develop"
 
 # Usage Example Function
 usage_example() {
+  echo -e "\e[32m=================================================="
+  echo -e "==================================================\e[39m"
+  echo " XMRig Build Script $VERS"
+  echo
+  echo " by DocDrydenn @ getpimp.org"
+  echo
+  echo -e "\e[32m=================================================="
+  echo -e "==================================================\e[39m"
+  echo
   echo " Usage:  xmrig-build [-dhs] -<0|7|8>"
   echo
   echo "    -0 | 0 | <blank>      - x86-64"
