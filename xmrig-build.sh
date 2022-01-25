@@ -209,7 +209,11 @@ PHASE="Dependancies"
 phaseheader $PHASE
 #===========================================================================================================================================
 echo "Refreshing Packages..."
-apt update
+if [ $DEBUG -eq 1 ]; then
+  echo -e "\e[96m++ $PHASE - apt update\e[39m"
+else
+  apt update
+fi
 echo
 echo "Checking Required Packages..."
 packages
