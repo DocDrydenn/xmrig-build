@@ -170,7 +170,8 @@ inoutfooter() {
 }
 
 
-
+# Flag Check
+flags $1 $2 $3 $4
 
 # Error Trap
 trap 'errexit' ERR
@@ -180,13 +181,6 @@ clear
 inoutheader
 inoutfooter
 
-# Flag Check
-flags $1 $2 $3 $4
-
-
-# Package Check
-packages
-echo
 
 #===========================================================================================================================================
 ### Start Phase 7
