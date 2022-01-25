@@ -102,20 +102,20 @@ self_update() {
 
 # Package Check/Install Function
 packages() {
-  #echo "1. Required Packages:"
   install_pkgs=" "
   for keys in "${!PackagesArray[@]}"; do
     REQUIRED_PKG=${PackagesArray[$keys]}
     PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $REQUIRED_PKG|grep "install ok installed")
     if [ "" = "$PKG_OK" ]; then
-      echo "  ✗ $REQUIRED_PKG: Not Found."
+      echo -e "\e[31m  ✗ $REQUIRED_PKG: Not Found.\e[39m"
       install_pkgs+=" $REQUIRED_PKG"
     else
-      echo "  ✓ $REQUIRED_PKG: Found."
+      echo -e "\e[33m  ✓ $REQUIRED_PKG: Found.\e[39m"
     fi
   done
   if [ " " != "$install_pkgs" ]; then
     echo
+    echo -e "\e[33mInstalling Packages:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       apt --dry-run -y install $install_pkgs
     else
@@ -208,14 +208,14 @@ phasefooter $PHASE
 PHASE="Dependancies"
 phaseheader $PHASE
 #===========================================================================================================================================
-echo "Refreshing Packages..."
+echo -e "\e[33mRefreshing Packages...\e[39m"
 if [ $DEBUG -eq 1 ]; then
   echo -e "\e[96m++ $PHASE - apt update\e[39m"
 else
   apt update
 fi
 echo
-echo "Checking Required Packages..."
+echo -e "\e[33mChecking Required Packages...\e[39m"
 packages
 
 ### End Phase 6
@@ -231,64 +231,64 @@ then
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
   then
     # Remove last backup archive
-    echo "Remove last backup archive:"
+    echo -e "\e[33mRemove last backup archive:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
     else
       rm $SCRIPTPATH/xmrig/xmrig-build.7z.bak
     fi
-    echo "xmrig-build.7z.bak removed"
+    echo -e "\e[33mxmrig-build.7z.bak removed\e[39m"
   else
-    echo "xmrig-build.7z.bak doesn't exist - Skipping..."
+    echo -e "\e[33mxmrig-build.7z.bak doesn't exist - Skipping...\e[39m"
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig.bak" ]
   then
     # Remove last backup binary
-    echo "Remove last backup binary:"
+    echo -e "\e[33mRemove last backup binary:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - rm $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
     else
       rm $SCRIPTPATH/xmrig/xmrig.bak
     fi
-    echo "xmrig.bak removed"
+    echo -e "\e[33mxmrig.bak removed\e[39m"
   else
-    echo "xmrig.bak doesn't exist - Skipping..."
+    echo -e "\e[33mxmrig.bak doesn't exist - Skipping...\e[39m"
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z" ]
   then
     # Backup last archive
-    echo "Backup last archive:"
+    echo -e "\e[33mBackup last archive:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak\e[39m"
     else
       mv $SCRIPTPATH/xmrig/xmrig-build.7z $SCRIPTPATH/xmrig/xmrig-build.7z.bak
     fi
-    echo "xmrig-build.7z renamed to xmrig-build.7z.bak"
+    echo -e "\e[33mxmrig-build.7z renamed to xmrig-build.7z.bak\e[39m"
   else
-    echo "xmrig-build.7z doesn't exist - Skipping..."
+    echo -e "\e[33mxmrig-build.7z doesn't exist - Skipping...\e[39m"
   fi
   if [ -f "$SCRIPTPATH/xmrig/xmrig" ]
   then
     # Backup last binary
-    echo "Backup last binary:"
+    echo -e "\e[33mBackup last binary:\e[39m"
     if [ $DEBUG -eq 1 ]; then
       echo -e "\e[96m++ $PHASE - mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak\e[39m"
     else
       mv $SCRIPTPATH/xmrig/xmrig $SCRIPTPATH/xmrig/xmrig.bak
     fi
-    echo "xmrig renamed to xmrig.bak"
+    echo -e "\e[33mxmrig renamed to xmrig.bak\e[39m"
   else
-    echo "xmrig doesn't exist - Skipping Backup..."
+    echo -e "\e[33mxmrig doesn't exist - Skipping Backup...\e[39m"
   fi
 else
   # Make xmrig folder if it doesn't exist
-  echo "Creating xmrig directory..."
+  echo -e "\e[33mCreating xmrig directory...\e[39m"
   if [ $DEBUG -eq 1 ]; then
     echo -e "\e[96m++ $PHASE - mkdir -p $SCRIPTPATH/xmrig\e[39m"
   else
     mkdir -p $SCRIPTPATH/xmrig
   fi
-  echo "xmrig directory created."
+  echo -e "\e[33mxmrig directory created.\e[39m"
 fi
 
 ### End Phase 5
