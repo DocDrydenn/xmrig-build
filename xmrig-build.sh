@@ -440,8 +440,7 @@ else
 fi
 
 # Create start-example.sh
-if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]
-then
+if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]; then
   if [ $DEBUG -eq 1 ]; then
     echo -e "\e[96m++ $PHASE - cat > $SCRIPTPATH/xmrig/start-example.sh <<EOF\e[39m"
   else
@@ -452,14 +451,15 @@ screen -wipe
 screen -dm $SCRIPTPATH/xmrig/xmrig -o <pool_IP>:<pool_port> -l /var/log/xmrig-cpu.log --donate-level 1 --rig-id <rig_name> -k --verbose
 screen -r
 EOF
-  echo "start-example.sh created."
+    echo "start-example.sh created."
 
-  # Make start-example.sh executable
-  if [ $DEBUG -eq 1 ]; then
-    echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/xmrig/start-example.sh\e[39m"
-  else
-    chmod +x $SCRIPTPATH/xmrig/start-example.sh
-    echo "start-example.sh made executable."
+    # Make start-example.sh executable
+    if [ $DEBUG -eq 1 ]; then
+      echo -e "\e[96m++ $PHASE - chmod +x $SCRIPTPATH/xmrig/start-example.sh\e[39m"
+    else
+      chmod +x $SCRIPTPATH/xmrig/start-example.sh
+      echo "start-example.sh made executable."
+    fi
   fi
 fi
 
