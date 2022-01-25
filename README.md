@@ -15,7 +15,8 @@ I've tested on the following with success:
 
 * Fails on Raspbian (Buster) and Raspberry Pi OS... I am unable to determine exactly why.
 
-![Alt text](/xmrig-build.jpg?raw=true "Screenshot")
+![Screenshot 2022-01-24 202425](https://user-images.githubusercontent.com/48564375/150893727-af9d5d0e-3d48-4519-aad0-f7cf5cb34661.png)
+
 
 ### Flags
 - `-h` will show script USAGE output
