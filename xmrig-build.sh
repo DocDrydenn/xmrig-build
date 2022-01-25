@@ -1,9 +1,117 @@
 #!/bin/bash
 
-VERS="v1.21d"
+VERS="v2.0d"
 
-# Clear screen
-clear
+
+# Required Packages
+PackagesArray=('build-essential' 'cmake' 'libuv1-dev' 'libssl-dev' 'libhwloc-dev' 'screen' 'p7zip-full')
+
+# Setup Variables
+#SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+BUILD=0
+DEBUG=0
+STATIC=0
+SCRIPT="$(readlink -f "$0")"
+SCRIPTFILE="$(basename "$SCRIPT")"
+SCRIPTPATH="$(dirname "$SCRIPT")"
+SCRIPTNAME="$0"
+ARGS=( "$@" )
+BRANCH="develop"
+
+
+# Usage Example Function
+usage_example() {
+  echo " Usage:  xmrig-build [-dhs] -<0|7|8>"
+  echo
+  echo "    -0 | 0 | <blank>      - x86-64"
+  echo "    -7 | 7                - ARMv7"
+  echo "    -8 | 8                - ARMv8"
+  echo
+  echo "    -s | s                - Build Static"
+  echo
+  echo "    -h | h                - Display (this) Usage Output"
+  echo "    -d | d                - Enable Debug Output"
+  echo
+  exit 0
+}
+
+# Flag Processing Function
+flags() {
+  ([ "$1" = "-h" ] || [ "$1" = "h" ]) && usage_example
+  ([ "$2" = "-h" ] || [ "$2" = "h" ]) && usage_example
+  ([ "$3" = "-h" ] || [ "$3" = "h" ]) && usage_example
+  ([ "$4" = "-h" ] || [ "$4" = "h" ]) && usage_example
+
+  ([ "$1" = "d" ] || [ "$1" = "-d" ]) && DEBUG=1
+  ([ "$2" = "d" ] || [ "$2" = "-d" ]) && DEBUG=1
+  ([ "$3" = "d" ] || [ "$3" = "-d" ]) && DEBUG=1
+
+  ([ "$1" = "-s" ] || [ "$1" = "s" ]) && STATIC=1
+  ([ "$2" = "-s" ] || [ "$2" = "s" ]) && STATIC=1
+  ([ "$3" = "-s" ] || [ "$3" = "s" ]) && STATIC=1
+
+  ([ "$1" = "7" ] || [ "$1" = "-7" ]) && BUILD=7
+  ([ "$2" = "7" ] || [ "$2" = "-7" ]) && BUILD=7
+  ([ "$3" = "7" ] || [ "$3" = "-7" ]) && BUILD=7
+
+  ([ "$1" = "8" ] || [ "$1" = "-8" ]) && BUILD=8
+  ([ "$2" = "8" ] || [ "$2" = "-8" ]) && BUILD=8
+  ([ "$3" = "8" ] || [ "$3" = "-8" ]) && BUILD=8
+}
+
+# Script Update Function
+self_update() {
+  echo "Status:"
+  cd "$SCRIPTPATH"
+  timeout 1s git fetch --quiet
+  timeout 1s git diff --quiet --exit-code "origin/$BRANCH" "$SCRIPTFILE"
+  [ $? -eq 1 ] && {
+    echo "  ✗ Version: Mismatched."
+    echo
+    echo "Fetching Update:"
+    if [ -n "$(git status --porcelain)" ];  # opposite is -z
+    then
+      git stash push -m 'local changes stashed before self update' --quiet
+    fi
+    git pull --force --quiet
+    git checkout $BRANCH --quiet
+    git pull --force --quiet
+    echo "  ✓ Update: Complete."
+    echo
+    echo "Launching New Version. Standby..."
+    sleep 3
+    cd - > /dev/null                        # return to original working dir
+    exec "$SCRIPTNAME" "${ARGS[@]}"
+
+    # Now exit this old instance
+    exit 1
+    }
+  echo "  ✓ Version: Current."
+  echo
+}
+
+# Package Check/Install Function
+packages() {
+  #echo "1. Required Packages:"
+  install_pkgs=" "
+  for keys in "${!PackagesArray[@]}"; do
+    REQUIRED_PKG=${PackagesArray[$keys]}
+    PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $REQUIRED_PKG|grep "install ok installed")
+    if [ "" = "$PKG_OK" ]; then
+      echo "  ✗ $REQUIRED_PKG: Not Found."
+      install_pkgs+=" $REQUIRED_PKG"
+    else
+      echo "  ✓ $REQUIRED_PKG: Found."
+    fi
+  done
+  if [ " " != "$install_pkgs" ]; then
+  echo
+  #echo "1a. Installing Missing Packages:"
+  #echo
+  #apt --dry-run install $install_pkgs #debug
+  apt install -y $install_pkgs
+  fi
+}
 
 # Error Trapping with Cleanup
 errexit() {
@@ -61,132 +169,53 @@ inoutfooter() {
   echo
 }
 
+
+
+
 # Error Trap
 trap 'errexit' ERR
 
-# Setup Variables
-SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-BUILD=0
-DEBUG=0
-STATIC=0
-USAGE=0
-
-# Parse Commandline Arguments
-([ "$1" = "7" ] || [ "$1" = "-7" ]) && BUILD=7
-([ "$1" = "8" ] || [ "$1" = "-8" ]) && BUILD=8
-
-([ "$1" = "d" ] || [ "$1" = "-d" ]) && DEBUG=1
-([ "$2" = "d" ] || [ "$2" = "-d" ]) && DEBUG=1
-([ "$3" = "d" ] || [ "$3" = "-d" ]) && DEBUG=1
-
-([ "$1" = "-s" ] || [ "$1" = "s" ]) && STATIC=1
-([ "$2" = "-s" ] || [ "$2" = "s" ]) && STATIC=1
-([ "$3" = "-s" ] || [ "$3" = "s" ]) && STATIC=1
-
-([ "$1" = "-h" ] || [ "$1" = "h" ]) && USAGE=1
-([ "$2" = "-h" ] || [ "$2" = "h" ]) && USAGE=1
-([ "$3" = "-h" ] || [ "$3" = "h" ]) && USAGE=1
-([ "$4" = "-h" ] || [ "$4" = "h" ]) && USAGE=1
-
 # Opening Intro
+clear
 inoutheader
 inoutfooter
 
-if [ $USAGE -eq 1 ]
-then
-  echo " Usage:  xmrig-build [-dhs] -<0|7|8>"
-  echo
-  echo "    -0 | 0 | <blank>      - x86-64"
-  echo "    -7 | 7                - ARMv7"
-  echo "    -8 | 8                - ARMv8"
-  echo
-  echo "    -s | s                - Build Static"
-  echo
-  echo "    -h | h                - Display (this) Usage Output"
-  echo "    -d | d                - Enable Debug Output"
-  echo
-inoutheader
-inoutfooter
-  exit 0
-fi
+# Flag Check
+flags $1 $2 $3 $4
 
-# Check for curl
-if [[ $(which curl &>/dev/null; echo $?) != "0" ]] # Production
-then
-  echo "Warning: CURL not found."
-  echo
-  echo "This script uses CURL to check for updates."
-  echo
-  read -r -p "Do you want to continue without checking? (not recommended) [y/N] " response
-  curlresponse=${response,,}
-  if [[ $curlresponse =~ ^(no|n| ) ]] || [[ -z $curlresponse ]]
-  then
-    echo
-    echo "Note: This script can attempt to install CURL and try again."
-    echo
-    read -r -p "Would you like to install CURL and try again? (recommended) [Y/n] " response
-    installresponse=${response,,}
-    if [[ $installresponse =~ ^(yes|y| ) ]] || [[ -z $installresponse ]]
-    then
-      echo
-      echo "Attempting to install CURL..."
-      echo
-      apt install curl -y
-      echo
-      echo "Restarting script..."
-      echo
-      exec $0
-    else
-      echo
-      echo "Script Aborted."
-      exit 0
-    fi
-  else
-    echo
-    echo "Continuing..."
-    sleep 3
-  fi
-else
-  # New Version Notification/Prompt
-  LVER="$(curl -sI "https://github.com/DocDrydenn/xmrig-build/releases/latest" | grep -Po 'tag\/\K(v\S+)')"
-  if [[ "$VERS" != "$LVER" ]]
-  then
-    echo -e "\e[5m\e[44m++ New Version Detected ++\e[39m\e[0m"
-    echo
-    echo " $VERS - Current"
-    echo " $LVER - Online"
-    echo
-    read -r -p "Do you want to continue anyway? (not recommended) [y/N] " response
-    response=${response,,}
-    if [[ $response =~ ^(no|n| ) ]] || [[ -z $response ]]
-    then
-      echo
-      echo "Script Aborted."
-      exit 0
-    else
-      echo
-      echo "Continuing..."
-      sleep 3
-    fi
-  fi
-fi
 
+# Package Check
+packages
+echo
+
+#===========================================================================================================================================
+### Start Phase 7
+PHASE="Script_Self-Update"
+phaseheader $PHASE
+#===========================================================================================================================================
+self_update
+
+### End Phase 7
+phasefooter $PHASE
+
+#===========================================================================================================================================
 ### Start Phase 6
 PHASE="Dependancies"
 phaseheader $PHASE
-
-# Install required tools for building from source
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt update && apt upgrade -y\e[39m"
-apt update && apt upgrade -y
-[ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full curl -y\e[39m"
-apt install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev screen p7zip-full -y
+#===========================================================================================================================================
+apt update
+packages
 
 ### End Phase 6
 phasefooter $PHASE
 
+#===========================================================================================================================================
 ### Start Phase 5
 PHASE="Backup"
 phaseheader $PHASE
+#===========================================================================================================================================
+exit 0
+
 if [ -d "$SCRIPTPATH/xmrig" ]
 then
   if [ -f "$SCRIPTPATH/xmrig/xmrig-build.7z.bak" ]
@@ -235,9 +264,11 @@ fi
 ### End Phase 5
 phasefooter $PHASE
 
+#===========================================================================================================================================
 ### Start Phase 4
 PHASE="Setup"
 phaseheader $PHASE
+#===========================================================================================================================================
 
 # If a _source directory is found, remove it.
 if [ -d "$SCRIPTPATH/_source" ]
@@ -277,10 +308,11 @@ cd build
 ### End Phase 4
 phasefooter $PHASE
 
+#===========================================================================================================================================
 ### Start Phase 3
 PHASE="Compiling/Building"
 phaseheader $PHASE
-
+#===========================================================================================================================================
 # Setup build enviroment
 if [ $STATIC -eq 1 ]
 then
@@ -311,10 +343,11 @@ fi
 # End Phase 3
 phasefooter $PHASE
 
+#===========================================================================================================================================
 ### Start Phase 2
 PHASE="Compressing/Moving"
 phaseheader $PHASE
-
+#===========================================================================================================================================
 # Compress built xmrig into archive
 [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - 7z a xmrig-build.7z $SCRIPTPATH/xmrig\e[39m"
 7z a xmrig-build.7z $SCRIPTPATH/xmrig
@@ -330,9 +363,11 @@ cp $SCRIPTPATH/_source/xmrig/build/xmrig $SCRIPTPATH/xmrig/xmrig
 # End Phase 2
 phasefooter $PHASE
 
+#===========================================================================================================================================
 # Start Phase 1
 PHASE="Cleanup"
 phaseheader $PHASE
+#===========================================================================================================================================
 
 # Change working dir back to root
 [ $DEBUG -eq 1 ] && echo -e "\e[96m++ $PHASE - cd $SCRIPTPATH\e[39m"
@@ -365,6 +400,7 @@ fi
 # End Phase 1
 phasefooter $PHASE
 
+#===========================================================================================================================================
 # Close Out
 inoutheader
 echo " Folder Location: $SCRIPTPATH/xmrig/"
