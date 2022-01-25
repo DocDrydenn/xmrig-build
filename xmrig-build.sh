@@ -170,7 +170,7 @@ inoutheader() {
   echo " by DocDrydenn @ getpimp.org"
   echo
 
-  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SKIPPING BUILD PROCESS ++\e[39m\e[0m"; echo; fi
+  if [[ "$DEBUG" = "1" ]]; then echo -e "\e[5m\e[96m++ DEBUG ENABLED - SIMULATION ONLY ++\e[39m\e[0m"; echo; fi
 }
 
 # Intro/Outro Footer
