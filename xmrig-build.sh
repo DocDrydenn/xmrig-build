@@ -2,10 +2,8 @@
 
 VERS="v2.0"
 
-
 # Required Packages
 PackagesArray=('build-essential' 'cmake' 'libuv1-dev' 'libssl-dev' 'libhwloc-dev' 'screen' 'p7zip-full')
-
 
 # Setup Variables
 #SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
@@ -17,8 +15,7 @@ SCRIPTFILE="$(basename "$SCRIPT")"
 SCRIPTPATH="$(dirname "$SCRIPT")"
 SCRIPTNAME="$0"
 ARGS=( "$@" )
-BRANCH="main"
-
+BRANCH="master"
 
 # Usage Example Function
 usage_example() {
