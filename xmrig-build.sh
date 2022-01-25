@@ -76,9 +76,9 @@ self_update() {
   timeout 1s git fetch --quiet
   timeout 1s git diff --quiet --exit-code "origin/$BRANCH" "$SCRIPTFILE"
   [ $? -eq 1 ] && {
-    echo "\e[33m  ✗ Version: Mismatched.\e[39m"
+    echo -e "\e[31m  ✗ Version: Mismatched.\e[39m"
     echo
-    echo "\e[33mFetching Update:\e[39m"
+    echo -e "\e[33mFetching Update:\e[39m"
     if [ -n "$(git status --porcelain)" ];  # opposite is -z
     then
       git stash push -m 'local changes stashed before self update' --quiet
@@ -86,9 +86,9 @@ self_update() {
     git pull --force --quiet
     git checkout $BRANCH --quiet
     git pull --force --quiet
-    echo "\e[33m  ✓ Update: Complete.\e[39m"
+    echo -e "\e[33m  ✓ Update: Complete.\e[39m"
     echo
-    echo "\e[33mLaunching New Version. Standby...\e[39m"
+    echo -e "\e[33mLaunching New Version. Standby...\e[39m"
     sleep 3
     cd - > /dev/null  # return to original working dir
     exec "$SCRIPTNAME" "${ARGS[@]}"
@@ -96,7 +96,7 @@ self_update() {
     # Now exit this old instance
     exit 1
     }
-  echo "\e[33m  ✓ Version: Current.\e[39m"
+  echo -e "\e[33m  ✓ Version: Current.\e[39m"
   echo
 }
 
