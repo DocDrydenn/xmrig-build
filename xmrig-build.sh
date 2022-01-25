@@ -382,6 +382,8 @@ cd $SCRIPTPATH
 rm -r _source
 echo "Source directory removed."
 
+touch $SCRIPTPATH/xmrig/.gitignore
+
 # Create start-example.sh
 if [ ! -f "$SCRIPTPATH/xmrig/start-example.sh" ]
 then
