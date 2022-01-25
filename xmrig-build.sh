@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERS="v2.0d"
+VERS="v2.0"
 
 
 # Required Packages
@@ -17,7 +17,7 @@ SCRIPTFILE="$(basename "$SCRIPT")"
 SCRIPTPATH="$(dirname "$SCRIPT")"
 SCRIPTNAME="$0"
 ARGS=( "$@" )
-BRANCH="develop"
+BRANCH="main"
 
 
 # Usage Example Function
